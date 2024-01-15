@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crossing Point Sighting Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f8ff;
+            text-align: center;
+            margin: 20px;
+        }
+
+        #calculator {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #resulttableframe {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: centre;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #3f51b5;
+            color: white;
+        }
+
+        input {
+            width: 120px;
+            padding: 8px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #3f51b5;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .light-green {
+            background-color: #99ff99;
+            padding: 5px;
+        }
+
+        .light-red {
+            background-color: #ff6666;
+            padding: 5px;
+        }
+
+        #date {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Crossing Point Sighting Calculator</h1>
+
+    <div id="date"></div>
+
+    <br>
+    
+    <div id="calculator">
+    <label for="lineSpeed">Line Speed (mph):</label>
+    <input type="number" id="lineSpeed" placeholder="Enter value">
+    <br>
+    <label for="crossingDistance">Crossing Distance (m):</label>
+    <input type="number" id="crossingDistance" placeholder="Enter value">
+    <br>
+    <label for="existingSighting">Existing Sighting Distance (m):</label><br><br>
+    <input type="number" id="existingSighting" placeholder="Optional">
+    <br>
+    <button onclick="calculate()">Calculate</button>
+    <button onclick="resetInputs()">Reset</button>
+    </div>
+
+    <br>
+    
+    <div id="resulttableframe">
+        <h3>Result</h3>
+    <table id="resultTable">
+        <tr>
+            <th style="width:65%">Output</th>
+            <th>Value</th>
+        </tr>
+        <tr id="crossingtimeRow">
+            <td>Crossing Time (sec)</td>
+            <td id="crossingtimeOutput"></td>
+        </tr>
+        <tr id="positionofsafetyRow">
+            <td>Crossing Time to Position of Safety (sec)</td>
+            <td id="positionofsafetyOutput"></td>
+        </tr>
+        <tr id="requiredsightingRow">
+            <td>Required Sighting Distance</td>
+            <td id="requiredsightingOutput"></td>
+	</table>
+    </div>
+
+    <br>
+
+    <div id ="date">
+        This app can be used to calculate the Sighting Distance required at Crossing Points.
+        <br>
+        <br>
+        For any issues, please contact toby.willson@networkrail.co.uk
+    </div>
+    
+    <script>
+        function calculate() {
+            // Get user inputs
+            const lineSpeed = parseFloat(document.getElementById("lineSpeed").value);
+            const crossingDistance = parseFloat(document.getElementById("crossingDistance").value);
+            const existingSighting = parseFloat(document.getElementById("existingSighting").value) || 0;
+
+            // Convert Line Speed to m/s
+            const lineSpeedMps = lineSpeed * 0.44704;
+
+            // Calculate crossing time and required sighting distances
+            const crossingtime = crossingDistance / 1.006;
+            const positionofsafety = crossingtime + 10;
+            const requiredsighting = positionofsafety * lineSpeedMps;
+
+            // Display results in the table
+            document.getElementById("crossingtimeOutput").textContent = crossingtime.toFixed(2) + " s";
+            document.getElementById("positionofsafetyOutput").textContent = positionofsafety.toFixed(2) + " s";
+            document.getElementById("requiredsightingOutput").innerHTML = checkSightingDistance(requiredsighting, existingSighting);
+        }
+
+    function checkSightingDistance(requiredsighting, existingSighting) {
+        if (existingSighting == 0) {
+            return `${requiredsighting.toFixed(0)} m`;
+        } else if (requiredsighting <= existingSighting) {
+            return `<span class="light-green">${requiredsighting.toFixed(0)} m</span>`;
+        } else if (requiredsighting > existingSighting) {
+            return `<span class="light-red">${requiredsighting.toFixed(0)} m</span>`;
+        } else {
+            return `${requiredsighting.toFixed(0)} m`;
+        }
+        }
+
+        function resetInputs() {
+            // Clear input fields
+            document.getElementById("lineSpeed").value = "";
+            document.getElementById("crossingDistance").value = "";
+            document.getElementById("existingSighting").value = "";
+
+            // Clear the result table
+            document.getElementById("crossingtimeOutput").textContent = "";
+            document.getElementById("positionofsafetyOutput").textContent = "";
+            document.getElementById("requiredsightingOutput").textContent = "";
+        }
+
+        // Display current date
+        const currentDate = new Date();
+        const formattedDate = `${currentDate.getDate()} / ${currentDate.getMonth() + 1} / ${currentDate.getFullYear()}`;
+        document.getElementById("date").textContent = `${formattedDate}`;
+    
+    </script>
+
+</body>
+</html>
